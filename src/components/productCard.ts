@@ -1,4 +1,5 @@
 import type { Product } from '../data/products';
+import { addToCart } from '../domain/cartStore';
 
 export function createProductCard(product: Product): HTMLElement {
   const card = document.createElement('article');
@@ -26,6 +27,14 @@ export function createProductCard(product: Product): HTMLElement {
   button.className = 'product-card__button';
   button.type = 'button';
   button.textContent = 'Add to cart';
+  button.addEventListener('click', () => {
+    addToCart(product.id);
+
+    button.textContent = 'Added!';
+    window.setTimeout(() => {
+      button.textContent = 'Add to cart';
+    }, 1000);
+  });
 
   card.append(image, title, category, price, button);
 
