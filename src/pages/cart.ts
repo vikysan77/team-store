@@ -1,6 +1,12 @@
 import { products } from '../data/products';
 import type { Product } from '../data/products';
-import { getCart, removeFromCart, updateQuantity } from '../domain/cartStore';
+import {
+  getCart,
+  getPromoCode,
+  removeFromCart,
+  setPromoCode,
+  updateQuantity,
+} from '../domain/cartStore';
 import { calculateCart } from '../domain/calculateCart';
 
 interface CartLine {
@@ -60,6 +66,7 @@ export function createCart(): HTMLElement {
   promoInput.placeholder = 'SALE10';
   promoInput.autocomplete = 'off';
   promoInput.spellcheck = false;
+  promoInput.value = getPromoCode();
 
   const promoMessage = document.createElement('p');
   promoMessage.className = 'cart__promo-message';
@@ -115,7 +122,10 @@ export function createCart(): HTMLElement {
     );
   }
 
-  promoInput.addEventListener('input', render);
+  promoInput.addEventListener('input', () => {
+    setPromoCode(promoInput.value);
+    render();
+  });
   section.append(heading, list, promoForm, summary);
   render();
 
