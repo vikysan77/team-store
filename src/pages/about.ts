@@ -1,6 +1,33 @@
+import verPhoto from '../assets/ver.jpg';
+import vikPhoto from '../assets/vik.jpg';
+
 const members = [
-  { name: 'first-github-login', contribution: 'Catalog, product data, and cart calculation.' },
-  { name: 'second-github-login', contribution: 'About page, filters, and cart page.' },
+  {
+    name: 'Vesselredrex',
+    tasks: [
+      'Project setup',
+      'Product data',
+      'Catalog and product cards',
+      'Search, filters, and sorting',
+      'Cart calculation',
+      'Cart page',
+    ],
+    photo: verPhoto,
+    github: 'https://github.com/Vesselredrex',
+  },
+  {
+    name: 'Vikysan77',
+    tasks: [
+      'About page and menu',
+      'Automated checks',
+      'Product filter function',
+      'Saving the cart',
+      'Deploy',
+      'Improvements',
+    ],
+    photo: vikPhoto,
+    github: 'https://github.com/vikysan77',
+  },
 ];
 
 export function createAbout(): HTMLElement {
@@ -34,25 +61,41 @@ export function createAbout(): HTMLElement {
 
   members.forEach((member) => {
     const item = document.createElement('li');
-    item.className = 'about__member';
 
-    const avatar = document.createElement('span');
+    const card = document.createElement('a');
+    card.className = 'about__member';
+    card.href = member.github;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+
+    const header = document.createElement('div');
+    header.className = 'about__header';
+
+    const avatar = document.createElement('img');
     avatar.className = 'about__avatar';
-    avatar.textContent = member.name.slice(0, 1).toUpperCase();
-    avatar.setAttribute('aria-hidden', 'true');
+    avatar.src = member.photo;
+    avatar.alt = '';
+    header.append(avatar);
 
     const body = document.createElement('div');
+    body.className = 'about__body';
 
     const name = document.createElement('p');
     name.className = 'about__name';
     name.textContent = member.name;
 
-    const contribution = document.createElement('p');
-    contribution.className = 'about__role';
-    contribution.textContent = member.contribution;
+    const tasks = document.createElement('ul');
+    tasks.className = 'about__tasks';
 
-    body.append(name, contribution);
-    item.append(avatar, body);
+    member.tasks.forEach((task) => {
+      const taskItem = document.createElement('li');
+      taskItem.textContent = task;
+      tasks.append(taskItem);
+    });
+
+    body.append(name, tasks);
+    card.append(header, body);
+    item.append(card);
     list.append(item);
   });
 
