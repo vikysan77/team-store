@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { addToCart, clearCart, getCart, removeFromCart, updateQuantity } from './cartStore';
 
 describe('cartStore', () => {
@@ -62,5 +62,56 @@ describe('cartStore', () => {
     copy[0]!.quantity = 99;
 
     expect(getCart()[0]?.quantity).toBe(1);
+  });
+
+  it('restores the cart and promo code from localStorage', async () => {
+    const memory = new Map<string, string>();
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => memory.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        memory.set(key, value);
+      },
+      removeItem: (key: string) => {
+        memory.delete(key);
+      },
+    });
+
+    try {
+      vi.resetModules();
+      const first = await import('./cartStore');
+      first.addToCart(4);
+      first.addToCart(4);
+      first.setPromoCode('SALE10');
+
+      vi.resetModules();
+      const second = await import('./cartStore');
+
+      expect(second.getCart()).toEqual([{ productId: 4, quantity: 2 }]);
+      expect(second.getPromoCode()).toBe('SALE10');
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('ignores a broken saved cart', async () => {
+    const memory = new Map<string, string>([['team-store-cart', '{']]);
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => memory.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        memory.set(key, value);
+      },
+      removeItem: (key: string) => {
+        memory.delete(key);
+      },
+    });
+
+    try {
+      vi.resetModules();
+      const store = await import('./cartStore');
+
+      expect(store.getCart()).toEqual([]);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
