@@ -10,6 +10,10 @@ Inter Store is a web application developed with TypeScript and Vite.
 - Prettier
 - Vitest
 
+## Deployment
+
+The store is published on GitHub Pages: https://vikysan77.github.io/team-store/
+
 ## Getting Started
 
 Install dependencies:
